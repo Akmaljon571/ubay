@@ -28,9 +28,11 @@ INSTALLED_APPS = [
     # Package
     'rest_framework',
     'corsheaders',
+    'drf_yasg',
 
     # Local
     'card.apps.CardConfig',
+    'client.apps.ClientConfig',
 ]
 
 MIDDLEWARE = [
