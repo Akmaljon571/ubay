@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     # Local
     'card.apps.CardConfig',
     'client.apps.ClientConfig',
+    'order.apps.OrderConfig',
 ]
 
 MIDDLEWARE = [
