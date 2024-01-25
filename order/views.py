@@ -3,8 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from client.models import ClientModel
+from card.models import CardModel
 from .models import OrderModel
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, OrderAllSerializer
 
 
 class OrderListAPIView(APIView):
@@ -19,9 +20,10 @@ class OrderListAPIView(APIView):
         except:
             return Response(data={"message": "Chat Not Found", "status": status.HTTP_404_NOT_FOUND},
                             status=status.HTTP_404_NOT_FOUND)
-        serializer_data = OrderSerializer(all_data, many=True).data
+        serializer_data = OrderAllSerializer(all_data, many=True).data
 
         filter_data = [item for item in serializer_data if item['user'] == a.id]
+
         return Response(data={"data": filter_data, "status": status.HTTP_200_OK}, status=status.HTTP_200_OK)
 
 
@@ -64,3 +66,36 @@ class OrderCountApiView(APIView):
         else:
             return Response(data={"message": "Var Bad Request", "status": status.HTTP_400_BAD_REQUEST},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+class OrderCreateAPIView(APIView):
+    def post(self, request, chat_id, card_id, *args, **kwargs):
+        try:
+            client = ClientModel.objects.get(chat_id=chat_id)
+            card = CardModel.objects.get(id=card_id)
+
+            order_data = {
+                'user': client.pk,
+                'card': card.pk,
+                'count': 1
+            }
+
+            serializer = OrderSerializer(data=order_data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(data={"message": "Order created successfully", "status": status.HTTP_201_CREATED},
+                                status=status.HTTP_201_CREATED)
+            else:
+                return Response(data={"message": "Invalid data", "errors": serializer.errors,
+                                      "status": status.HTTP_400_BAD_REQUEST},
+                                status=status.HTTP_400_BAD_REQUEST)
+        except ClientModel.DoesNotExist:
+            return Response(data={"message": "Client not found", "status": status.HTTP_404_NOT_FOUND},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        except CardModel.DoesNotExist:
+            return Response(data={"message": "Card not found", "status": status.HTTP_404_NOT_FOUND},
+                            status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response(data={"message": str(e), "status": status.HTTP_500_INTERNAL_SERVER_ERROR},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)

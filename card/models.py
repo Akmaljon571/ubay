@@ -3,7 +3,7 @@ from django.db import models
 
 class CardModel(models.Model):
     title = models.CharField(max_length=255)
-    image = models.ImageField(upload_to='image/', null=True, blank=True)
+    image = models.TextField()
     price = models.CharField(max_length=255)
     desc = models.TextField()
 

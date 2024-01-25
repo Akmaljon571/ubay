@@ -4,5 +4,6 @@ from .views import OrderListAPIView, OrderClearAPIView, OrderCountApiView
 urlpatterns = [
     path('all/<int:chat_id>/', OrderListAPIView.as_view()),
     path('clear/<int:chat_id>/', OrderClearAPIView.as_view()),
-    path('count/<int:id>/<str:var>', OrderCountApiView.as_view()),
+    path('count/<int:id>/<str:var>/', OrderCountApiView.as_view()),
+    path('create/<int:chat_id>/<int:card_id>/', OrderCountApiView.as_view()),
 ]
